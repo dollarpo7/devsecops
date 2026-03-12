@@ -15,7 +15,6 @@ pipeline {
     deploymentName = "devsecops"
     containerName = "devsecops-container"
     serviceName = "devsecops-svc"
-    imageName = "dollarpo77/numeric-app:${GIT_COMMIT}"
     applicationURL="http://devsec.westeurope.cloudapp.azure.com/"
     applicationURI="/increment/99"
   }
@@ -83,8 +82,8 @@ pipeline {
       steps {
         withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
           sh 'printenv'
-          sh 'sudo docker build -t dollarpo77/numeric-app:""$GIT_COMMIT"" .'
-          sh 'docker push dollarpo77/numeric-app:""$GIT_COMMIT""'
+          sh 'sudo docker build -t dollarpo77/numeric-app:"$(git rev-parse --short HEAD)" .'
+          sh 'docker push dollarpo77/numeric-app:"$(git rev-parse --short HEAD)"'
         }
       }
     }
