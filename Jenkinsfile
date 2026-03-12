@@ -1,5 +1,7 @@
-@Library('slack') _
-
+library identifier: 'slack@main', retriever: modernSCM([
+  $class: 'GitSCMSource',
+  remote: 'https://github.com/dollarpo7/devsecops.git'
+])
 
 /////// ******************************* Code for fectching Failed Stage Name ******************************* ///////
 import io.jenkins.blueocean.rest.impl.pipeline.PipelineNodeGraphVisitor
