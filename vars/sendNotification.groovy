@@ -2,6 +2,7 @@ def call(String buildStatus = 'STARTED') {
  buildStatus = buildStatus ?: 'SUCCESS'
 
  def color
+ def emoji
 
  if (buildStatus == 'SUCCESS') {
   color = '#47ec05'
@@ -18,7 +19,7 @@ def call(String buildStatus = 'STARTED') {
 
 // slackSend(color: color, message: msg)
 
- attachments = [
+ def attachments = [
     [
       "color": color,
       "blocks": [
@@ -114,11 +115,11 @@ def call(String buildStatus = 'STARTED') {
           "fields": [
             [
               "type": "mrkdwn",
-              "text": "*Git Commit:*\n${GIT_COMMIT}"
+              "text": "*Git Commit:*\n${env.GIT_COMMIT ?: 'N/A'}"
             ],
             [
               "type": "mrkdwn",
-              "text": "*GIT Previous Success Commit:*\n${GIT_PREVIOUS_SUCCESSFUL_COMMIT}"
+              "text": "*GIT Previous Success Commit:*\n${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT ?: 'N/A'}"
             ]
           ], 
           "accessory": [
@@ -131,7 +132,7 @@ def call(String buildStatus = 'STARTED') {
           "type": "section",
           "text": [
               "type": "mrkdwn",
-              "text": "*Git Branch: * `${GIT_BRANCH}`"
+              "text": "*Git Branch: * `${env.GIT_BRANCH ?: 'N/A'}`"
             ],
           "accessory": [
             "type": "button",
