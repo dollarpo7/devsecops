@@ -109,7 +109,10 @@ pipeline {
         parallel(
           "Deployment": {
             withKubeConfig([credentialsId: 'kubeconfig']) {
-              sh "bash k8s-deployment.sh"
+              sh '''
+                export imageName="dollarpo77/numeric-app:$(git rev-parse --short HEAD)"
+                bash k8s-deployment.sh
+              '''
             }
           },
           "Rollout Status": {
