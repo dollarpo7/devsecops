@@ -15,7 +15,7 @@ pipeline {
     deploymentName = "devsecops"
     containerName = "devsecops-container"
     serviceName = "devsecops-svc"
-    imageName = "siddharth67/numeric-app:${GIT_COMMIT}"
+    imageName = "dollarpo77/numeric-app:${GIT_COMMIT}"
     applicationURL="http://devsec.westeurope.cloudapp.azure.com/"
     applicationURI="/increment/99"
   }
@@ -79,15 +79,15 @@ pipeline {
  //    }
     
 
- //    stage('Docker Build and Push') {
- //      steps {
- //        withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
- //          sh 'printenv'
- //          sh 'sudo docker build -t siddharth67/numeric-app:""$GIT_COMMIT"" .'
- //          sh 'docker push siddharth67/numeric-app:""$GIT_COMMIT""'
- //        }
- //      }
- //    }
+    stage('Docker Build and Push') {
+      steps {
+        withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
+          sh 'printenv'
+          sh 'sudo docker build -t dollarpo77/numeric-app:""$GIT_COMMIT"" .'
+          sh 'docker push dollarpo77/numeric-app:""$GIT_COMMIT""'
+        }
+      }
+    }
 
  //    stage('Vulnerability Scan - Kubernetes') {
  //      steps {
@@ -210,49 +210,49 @@ pipeline {
  //      }
  //    }   
    
-      stage('Testing Slack - 1') {
-      steps {
-          sh 'exit 0'
-      }
-    }
+//       stage('Testing Slack - 1') {
+//       steps {
+//           sh 'exit 0'
+//       }
+//     }
 
-   stage('Testing Slack - Error Stage') {
-      steps {
-          sh 'exit 0'
-      }
-    }
+//    stage('Testing Slack - Error Stage') {
+//       steps {
+//           sh 'exit 0'
+//       }
+//     }
 
   }
 
-  post { 
-     //    always { 
-     //      junit 'target/surefire-reports/*.xml'
-     //      jacoco execPattern: 'target/jacoco.exec'
-     //      pitmutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
-     //      dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
-     //      publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'owasp-zap-report', reportFiles: 'zap_report.html', reportName: 'OWASP ZAP HTML Report', reportTitles: 'OWASP ZAP HTML Report'])
+//   post { 
+//      //    always { 
+//      //      junit 'target/surefire-reports/*.xml'
+//      //      jacoco execPattern: 'target/jacoco.exec'
+//      //      pitmutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
+//      //      dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+//      //      publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'owasp-zap-report', reportFiles: 'zap_report.html', reportName: 'OWASP ZAP HTML Report', reportTitles: 'OWASP ZAP HTML Report'])
         
- 		  // //Use sendNotifications.groovy from shared library and provide current build result as parameter 
-     //      //sendNotification currentBuild.result
-     //    }
+//  		  // //Use sendNotifications.groovy from shared library and provide current build result as parameter 
+//      //      //sendNotification currentBuild.result
+//      //    }
 
-        success {
-        	script {
-		        /* Use slackNotifier.groovy from shared library and provide current build result as parameter */  
-		        env.failedStage = "none"
-		        env.emoji = ":white_check_mark: :tada: :thumbsup_all:" 
-		        sendNotification currentBuild.result
-		      }
-        }
+//         success {
+//         	script {
+// 		        /* Use slackNotifier.groovy from shared library and provide current build result as parameter */  
+// 		        env.failedStage = "none"
+// 		        env.emoji = ":white_check_mark: :tada: :thumbsup_all:" 
+// 		        sendNotification currentBuild.result
+// 		      }
+//         }
 
-	    failure {
-	    	script {
-			  // Track failed stage - set env.failedStage in each stage's failure block for accurate tracking
-	          env.failedStage = env.STAGE_NAME ?: "Unknown"
-	          env.emoji = ":x: :red_circle: :sos:"
-		      sendNotification currentBuild.result
-		    }	
-	    }
-    }
+// 	    failure {
+// 	    	script {
+// 			  // Track failed stage - set env.failedStage in each stage's failure block for accurate tracking
+// 	          env.failedStage = env.STAGE_NAME ?: "Unknown"
+// 	          env.emoji = ":x: :red_circle: :sos:"
+// 		      sendNotification currentBuild.result
+// 		    }	
+// 	    }
+//     }
 
 }
