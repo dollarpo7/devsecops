@@ -73,19 +73,49 @@ systemctl enable docker
 
 
 echo ".........----------------#################._.-.-Java and MAVEN-.-._.#################----------------........."
-apt install openjdk-11-jdk maven -y
+apt install openjdk-17-jdk maven fontconfig -y
 java -version
 mvn -v
 
 echo ".........----------------#################._.-.-JENKINS-.-._.#################----------------........."
-wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | gpg --dearmor -o /usr/share/keyrings/jenkins.gpg
-echo 'deb [signed-by=/usr/share/keyrings/jenkins.gpg] http://pkg.jenkins.io/debian-stable binary/' > /etc/apt/sources.list.d/jenkins.list
-apt update
-apt install -y jenkins
+# Create Jenkins directory and user
+mkdir -p /var/lib/jenkins
+useradd -m -d /var/lib/jenkins -s /bin/bash jenkins || true
+chown jenkins:jenkins /var/lib/jenkins
+
+# Download Jenkins WAR file
+cd /opt
+wget -q https://get.jenkins.io/war-stable/latest/jenkins.war
+
+# Create systemd service file for Jenkins
+cat > /etc/systemd/system/jenkins.service <<EOF
+[Unit]
+Description=Jenkins Automation Server
+After=network.target
+
+[Service]
+Type=simple
+User=jenkins
+Environment="JENKINS_HOME=/var/lib/jenkins"
+ExecStart=/usr/bin/java -jar /opt/jenkins.war --httpPort=8080
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Start Jenkins
 systemctl daemon-reload
 systemctl enable jenkins
 systemctl start jenkins
+
+# Add Jenkins user to docker group and grant sudo privileges
 usermod -a -G docker jenkins
 echo "jenkins ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+# Wait for Jenkins to initialize and show initial password
+sleep 30
+echo "Jenkins Initial Admin Password:"
+cat /var/lib/jenkins/secrets/initialAdminPassword
 
 echo ".........----------------#################._.-.-COMPLETED-.-._.#################----------------........."
