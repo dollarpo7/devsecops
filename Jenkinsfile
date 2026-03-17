@@ -49,7 +49,7 @@ pipeline {
     stage('SonarQube - SAST') {
       steps {
         withSonarQubeEnv('SonarQube') {
-          sh "mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          sh "mvn sonar:sonar \
               -Dsonar.projectKey=numeric_app \
               -Dsonar.projectName='numeric_app' \
               -Dsonar.host.url=http://devsec.westeurope.cloudapp.azure.com:9000 \
