@@ -107,6 +107,7 @@
 			    <version>6.1.6</version>
 			    <configuration>
 			     <format>ALL</format>
+				 <nvdApiKey>3c1db6f0-8430-4004-8f89-7ddf5e2e7c1d</nvdApiKey>
 			     <failBuildOnCVSS>8</failBuildOnCVSS> <!-- fail the build for CVSS greater than or equal to 9 -->
 
 			     <!-- 
