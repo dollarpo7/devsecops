@@ -62,11 +62,6 @@ pipeline {
         	"Dependency Scan": {
         		sh "mvn dependency-check:check"
 			}
-      post {
-        always {
-          dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
-        }
-      }
       // ,
 			// "Trivy Scan":{
 			// 	sh "bash trivy-docker-image-scan.sh"
@@ -75,6 +70,11 @@ pipeline {
 			// 	sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-docker-security.rego Dockerfile'
 			// }   	
       	)
+      }
+      post {
+        always {
+          dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+        }
       }
     }
     
