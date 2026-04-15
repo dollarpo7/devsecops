@@ -221,35 +221,30 @@ pipeline {
 
   }
 
-//   post { 
-//      //    always { 
-//      //      junit 'target/surefire-reports/*.xml'
-//      //      jacoco execPattern: 'target/jacoco.exec'
-//      //      pitmutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
-//      //      dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
-//      //      publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'owasp-zap-report', reportFiles: 'zap_report.html', reportName: 'OWASP ZAP HTML Report', reportTitles: 'OWASP ZAP HTML Report'])
-        
-//  		  // //Use sendNotifications.groovy from shared library and provide current build result as parameter 
-//      //      //sendNotification currentBuild.result
-//      //    }
+  post {
+    always {
+      junit 'target/surefire-reports/*.xml'
+      jacoco execPattern: 'target/jacoco.exec'
+      dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+      // pitmutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
+      // publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'owasp-zap-report', reportFiles: 'zap_report.html', reportName: 'OWASP ZAP HTML Report', reportTitles: 'OWASP ZAP HTML Report'])
+    }
 
-//         success {
-//         	script {
-// 		        /* Use slackNotifier.groovy from shared library and provide current build result as parameter */  
-// 		        env.failedStage = "none"
-// 		        env.emoji = ":white_check_mark: :tada: :thumbsup_all:" 
-// 		        sendNotification currentBuild.result
-// 		      }
-//         }
+    success {
+      script {
+        env.failedStage = "none"
+        env.emoji = ":white_check_mark: :tada: :thumbsup_all:"
+        sendNotification currentBuild.result
+      }
+    }
 
-// 	    failure {
-// 	    	script {
-// 			  // Track failed stage - set env.failedStage in each stage's failure block for accurate tracking
-// 	          env.failedStage = env.STAGE_NAME ?: "Unknown"
-// 	          env.emoji = ":x: :red_circle: :sos:"
-// 		      sendNotification currentBuild.result
-// 		    }	
-// 	    }
-//     }
+    failure {
+      script {
+        env.failedStage = env.STAGE_NAME ?: "Unknown"
+        env.emoji = ":x: :red_circle: :sos:"
+        sendNotification currentBuild.result
+      }
+    }
+  }
 
 }
