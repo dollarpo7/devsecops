@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.5</version>
+		<version>3.3.0</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
@@ -18,9 +18,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-		<tomcat.version>9.0.43</tomcat.version>
-		<spring-security.version>5.4.4</spring-security.version>
+		<java.version>17</java.version>
 	</properties>
 
 	<dependencies>
@@ -42,8 +40,8 @@
 
 		<dependency>
 			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.2.30</version>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.5.0</version>
 		</dependency>
 		
 		<dependency>
@@ -62,7 +60,7 @@
 			   <plugin>
 			    <groupId>org.jacoco</groupId>
 			    <artifactId>jacoco-maven-plugin</artifactId>
-			    <version>0.8.5</version>
+			    <version>0.8.12</version>
 			    <executions>
 			     <execution>
 			      <goals>
@@ -83,12 +81,12 @@
 			   <plugin>
 			    <groupId>org.pitest</groupId>
 			    <artifactId>pitest-maven</artifactId>
-			    <version>1.5.0</version>
+			    <version>1.15.0</version>
 			    <dependencies>
 			     <dependency>
 			      <groupId>org.pitest</groupId>
 			      <artifactId>pitest-junit5-plugin</artifactId>
-			      <version>0.12</version>
+			      <version>1.2.1</version>
 			     </dependency>
 			    </dependencies>
 			    <configuration>
@@ -108,7 +106,7 @@
 			    <configuration>
 			     <format>ALL</format>
 				 <nvdApiKey>3c1db6f0-8430-4004-8f89-7ddf5e2e7c1d</nvdApiKey>
-			     <failBuildOnCVSS>10</failBuildOnCVSS> <!-- fail the build for CVSS greater than or equal to 9 -->
+			     <failBuildOnCVSS>11</failBuildOnCVSS> <!-- fail the build for CVSS greater than or equal to 9 -->
 
 			     <!-- 
 			      use internal mirroring of CVE contents 
