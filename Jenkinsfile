@@ -65,11 +65,6 @@ pipeline {
 			// }   	
       	)
       }
-      post {
-        always {
-          dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
-        }
-      }
     }
     
 
@@ -101,21 +96,20 @@ pipeline {
 
     stage('K8S Deployment - DEV') {
       steps {
-        parallel(
-          "Deployment": {
+        script {
+          try {
             withKubeConfig([credentialsId: 'kubeconfig']) {
               sh '''
                 export imageName="dollarpo77/numeric-app:$(git rev-parse --short HEAD)"
                 bash k8s-deployment.sh
+                bash k8s-deployment-rollout-status.sh
               '''
             }
-          },
-          "Rollout Status": {
-            withKubeConfig([credentialsId: 'kubeconfig']) {
-              sh "bash k8s-deployment-rollout-status.sh"
-            }
+          } catch (e) {
+            env.failedStage = 'K8S Deployment - DEV'
+            throw e
           }
-        )
+        }
       }
     }
 
@@ -234,15 +228,25 @@ pipeline {
       script {
         env.failedStage = "none"
         env.emoji = ":white_check_mark: :tada: :thumbsup_all:"
-        sendNotification currentBuild.result
+        // Slack notifications temporarily disabled
+        // try {
+        //   sendNotification currentBuild.result
+        // } catch (err) {
+        //   echo "Slack notification failed: ${err.message}"
+        // }
       }
     }
 
     failure {
       script {
-        env.failedStage = env.STAGE_NAME ?: "Unknown"
+        env.failedStage = env.failedStage ?: (env.STAGE_NAME ?: "Unknown")
         env.emoji = ":x: :red_circle: :sos:"
-        sendNotification currentBuild.result
+        // Slack notifications temporarily disabled
+        // try {
+        //   sendNotification currentBuild.result
+        // } catch (err) {
+        //   echo "Slack notification failed: ${err.message}"
+        // }
       }
     }
   }
