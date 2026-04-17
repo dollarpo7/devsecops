@@ -46,7 +46,7 @@ pipeline {
             -Dsonar.projectKey=numeric_app \
             -Dsonar.projectName='numeric_app' \
             -Dsonar.host.url=http://devsec.westeurope.cloudapp.azure.com:9000 \
-            -Dsonar.token=sqp_fae0da0a1a2f23f450b3620e49677ba0ed04a9fd"
+            -Dsonar.token=sqp_481a47a4c9668389d01b7844be83052bb23a8b14"
       }
     }
 
