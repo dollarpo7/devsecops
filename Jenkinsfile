@@ -55,15 +55,20 @@ pipeline {
         parallel(
         	"Dependency Scan": {
         		sh "mvn dependency-check:check"
-			}
+			},
+          "Trivy Scan":{
+            sh "bash trivy-docker-image-scan.sh"
+          }
       // ,
-			// "Trivy Scan":{
-			// 	sh "bash trivy-docker-image-scan.sh"
-			// },
 			// "OPA Conftest":{
 			// 	sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-docker-security.rego Dockerfile'
 			// }   	
       	)
+      }
+      post {
+        always {
+          dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+        }
       }
     }
     
@@ -96,20 +101,21 @@ pipeline {
 
     stage('K8S Deployment - DEV') {
       steps {
-        script {
-          try {
+        parallel(
+          "Deployment": {
             withKubeConfig([credentialsId: 'kubeconfig']) {
               sh '''
                 export imageName="dollarpo77/numeric-app:$(git rev-parse --short HEAD)"
                 bash k8s-deployment.sh
-                bash k8s-deployment-rollout-status.sh
               '''
             }
-          } catch (e) {
-            env.failedStage = 'K8S Deployment - DEV'
-            throw e
+          },
+          "Rollout Status": {
+            withKubeConfig([credentialsId: 'kubeconfig']) {
+              sh "bash k8s-deployment-rollout-status.sh"
+            }
           }
-        }
+        )
       }
     }
 
@@ -228,25 +234,15 @@ pipeline {
       script {
         env.failedStage = "none"
         env.emoji = ":white_check_mark: :tada: :thumbsup_all:"
-        // Slack notifications temporarily disabled
-        // try {
-        //   sendNotification currentBuild.result
-        // } catch (err) {
-        //   echo "Slack notification failed: ${err.message}"
-        // }
+        sendNotification currentBuild.result
       }
     }
 
     failure {
       script {
-        env.failedStage = env.failedStage ?: (env.STAGE_NAME ?: "Unknown")
+        env.failedStage = env.STAGE_NAME ?: "Unknown"
         env.emoji = ":x: :red_circle: :sos:"
-        // Slack notifications temporarily disabled
-        // try {
-        //   sendNotification currentBuild.result
-        // } catch (err) {
-        //   echo "Slack notification failed: ${err.message}"
-        // }
+        sendNotification currentBuild.result
       }
     }
   }
