@@ -15,8 +15,8 @@ pipeline {
     deploymentName = "devsecops"
     containerName = "devsecops-container"
     serviceName = "devsecops-svc"
-    applicationURL="http://devsec.westeurope.cloudapp.azure.com/"
-    applicationURI="/increment/99"
+    applicationURL="http://devsec.westeurope.cloudapp.azure.com"
+    applicationURI="increment/99"
   }
 
   stages {
