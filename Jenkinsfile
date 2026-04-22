@@ -176,6 +176,7 @@ pipeline {
         parallel(
           "Deployment": {
             withKubeConfig([credentialsId: 'kubeconfig']) {
+              sh "kubectl create namespace prod --dry-run=client -o yaml | kubectl apply -f -"
               sh "sed -i 's#replace#${imageName}#g' k8s_PROD-deployment_service.yaml"
               sh "kubectl -n prod apply -f k8s_PROD-deployment_service.yaml"
             }
