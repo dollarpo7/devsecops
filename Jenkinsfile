@@ -17,6 +17,7 @@ pipeline {
     serviceName = "devsecops-svc"
     applicationURL="http://devsec.westeurope.cloudapp.azure.com"
     applicationURI="increment/99"
+    imageName = "dollarpo77/numeric-app:${sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()}"
   }
 
   stages {
@@ -173,20 +174,12 @@ pipeline {
 
     stage('K8S Deployment - PROD') {
       steps {
-        parallel(
-          "Deployment": {
-            withKubeConfig([credentialsId: 'kubeconfig']) {
-              sh "kubectl create namespace prod --dry-run=client -o yaml | kubectl apply -f -"
-              sh "sed -i 's#replace#${imageName}#g' k8s_PROD-deployment_service.yaml"
-              sh "kubectl -n prod apply -f k8s_PROD-deployment_service.yaml"
-            }
-          },
-          "Rollout Status": {
-            withKubeConfig([credentialsId: 'kubeconfig']) {
-              sh "bash k8s-PROD-deployment-rollout-status.sh"
-            }
-          }
-        )
+        withKubeConfig([credentialsId: 'kubeconfig']) {
+          sh "kubectl create namespace prod --dry-run=client -o yaml | kubectl apply -f -"
+          sh "sed -i 's#replace#${imageName}#g' k8s_PROD-deployment_service.yaml"
+          sh "kubectl -n prod apply -f k8s_PROD-deployment_service.yaml"
+          sh "bash k8s-PROD-deployment-rollout-status.sh"
+        }
       }
     }
 
